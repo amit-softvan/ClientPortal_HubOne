@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(248 83% 98%);
+  --foreground: hsl(223 84% 5%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(223 84% 5%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(223 84% 5%);
+  --primary: hsl(217 91% 60%);
+  --primary-dark: hsl(224 76% 48%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(158 64% 52%);
+  --secondary-dark: hsl(158 64% 42%);
+  --secondary-foreground: hsl(0 0% 100%);
+  --muted: hsl(220 14% 96%);
+  --muted-foreground: hsl(220 9% 46%);
+  --accent: hsl(217 91% 60% / 0.1);
+  --accent-foreground: hsl(217 91% 60%);
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(220 13% 91%);
+  --input: hsl(220 13% 91%);
+  --ring: hsl(217 91% 60%);
+  --success: hsl(142 76% 36%);
+  --warning: hsl(38 92% 50%);
+  --info: hsl(199 89% 48%);
+  --light: hsl(210 40% 98%);
+  --dark: hsl(223 84% 5%);
+  --radius: 0.75rem;
+  --font-sans: 'Inter', sans-serif;
+}
+
+.dark {
+  --background: hsl(223 84% 5%);
+  --foreground: hsl(210 40% 98%);
+  --card: hsl(223 47% 11%);
+  --card-foreground: hsl(210 40% 98%);
+  --popover: hsl(223 47% 11%);
+  --popover-foreground: hsl(210 40% 98%);
+  --primary: hsl(217 91% 60%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(158 64% 52%);
+  --secondary-foreground: hsl(0 0% 100%);
+  --muted: hsl(223 47% 11%);
+  --muted-foreground: hsl(215 20% 65%);
+  --accent: hsl(217 91% 60% / 0.1);
+  --accent-foreground: hsl(217 91% 60%);
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(223 47% 20%);
+  --input: hsl(223 47% 20%);
+  --ring: hsl(217 91% 60%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer components {
+  .sidebar-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  }
+  
+  /* Task Detail Header - Purple/Violet Theme */
+  .task-header {
+    background: linear-gradient(135deg, hsl(270, 50%, 40%) 0%, hsl(280, 60%, 50%) 50%, hsl(260, 55%, 45%) 100%);
+    color: white;
+  }
+  
+  .dark .task-header {
+    background: linear-gradient(135deg, hsl(270, 45%, 25%) 0%, hsl(280, 50%, 35%) 50%, hsl(260, 40%, 30%) 100%);
+  }
+  
+  .login-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  }
+  
+  .dashboard-card {
+    @apply bg-card border border-border rounded-xl shadow-sm transition-all duration-200;
+  }
+  
+  .dashboard-card:hover {
+    @apply shadow-md -translate-y-0.5;
+  }
+  
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .status-approved {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .status-denied {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .status-submitted {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  .metric-value {
+    @apply text-4xl font-bold text-primary;
+  }
+  
+  .metric-label {
+    @apply text-sm text-muted-foreground font-medium;
+  }
+  
+  .page-title {
+    @apply text-3xl font-semibold text-foreground mb-2;
+  }
+  
+  .page-subtitle {
+    @apply text-muted-foreground text-base;
+  }
+}

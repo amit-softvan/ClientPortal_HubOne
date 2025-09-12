@@ -1,0 +1,467 @@
+Start Task 
+
+Clicking redirects the user to a new Task Detail Page. 
+
+Task detail page header include a header section displaying key queue information before the tabbed content  
+
+Left Section - Patient Information: 
+
+Patient Name with ID (e.g., "abbigaile urioste [#5086]") 
+
+Date of Birth with calculated age (e.g., "06/13/1988 (Age: 37)") 
+
+Insurance Policy Number (e.g., "W268955855") 
+
+Insurance Company (e.g., "Aetna") 
+
+Additional identifier line (e.g., "n/a") 
+
+Provider reference (e.g., "Ryan Hummel (1811913213)") 
+
+Center Section - Provider/Location Information: 
+
+Provider/Facility name (e.g., "House-ChiroTouch") 
+
+Location details (e.g., "Element Chiropractic and Wellness Center") 
+
+Additional location info (e.g., "n/a") 
+
+City and State (e.g., "San Diego, CA") 
+
+Provider icon indicator 
+
+Right Section - Queue Status Information: 
+
+Phone numbers (e.g., "1427371699", "26-3531001") 
+
+Current Status with timestamp (e.g., "Status: Inactive 07/07/2023 12:30PM") 
+
+Priority/Urgency indicator (e.g., "Urgent - 4h") 
+
+Queue type indicator (e.g., "Verifications") 
+
+Header Styling Requirements: 
+
+Purple/violet header background color 
+
+White text for contrast 
+
+Icons for different information types (patient, provider, phone, status, etc.) 
+
+Responsive layout maintaining information hierarchy 
+
+Clear visual separation between the three information sections 
+
+ 
+
+Task Detail Page must display in tabs: 
+
+Customer Information (Patient Information) 
+
+CUSTOMER INFO Tab Identification Section:  
+
+First Name 
+
+Middle Name 
+
+Last Name 
+
+DOB (Date of Birth) 
+
+Patient ID 
+
+Employer 
+
+Active Status (checkbox) 
+
+Address Section:  
+
+Address Line 1 
+
+Address Line 2 
+
+City 
+
+State (dropdown) 
+
+Zip 
+
+Validate button functionality 
+
+Program Information Section:  
+
+Description (text area) 
+
+Flash (text area for additional notes) 
+
+Program ICD Codes Section:  
+
+Search functionality for ICD codes 
+
+ICD Codes List (left panel with available codes) 
+
+Customer Program ICD Codes (right panel with assigned codes) 
+
+Add/Remove buttons between panels 
+
+Programs Table:  
+
+Program Name 
+
+Location 
+
+Started On Date 
+
+Due Date 
+
+Last Touch Date 
+
+Insurance Type 
+
+Status 
+
+Queue 
+
+Disposition 
+
+Action icons per row 
+
+Insurance 
+
+INSURANCE Tab Insurance Company Selection:  
+
+Insurance company list with Primary/Inactive status indicators 
+
+Checkbox selection for active insurance 
+
+"New Insurance Company" button 
+
+Insurance Details Section:  
+
+Insurance Company Name 
+
+Plan Type 
+
+Effective Date 
+
+Expires Date 
+
+Address Line 1 & 2 
+
+City, State, Zip 
+
+Phone, Policy ID, Group, Payer ID 
+
+Active Insurance Company checkbox 
+
+Processor field 
+
+Insurance Type (dropdown: Commercial, etc.) 
+
+Policy Type (dropdown: PPO, etc.) 
+
+Insurance Priority (dropdown: Primary, etc.) 
+
+Benefit Cycle (dropdown: Yearly, etc.) 
+
+Cardholder Info Section:  
+
+Relationship (dropdown: Self, etc.) 
+
+DOB 
+
+First Name 
+
+Last Name 
+
+EV Data 
+
+EV DATA Tab Action Summary Section:  
+
+Queue information 
+
+Disposition 
+
+Last Task 
+
+Last Result 
+
+Due Date 
+
+Provider 
+
+Notes 
+
+Task Control Buttons:  
+
+Complete Task 
+
+Manual 
+
+Transfer 
+
+Choose (dropdown for task selection) 
+
+Task Complete button 
+
+Insurance Details Section:  
+
+Insurance Company 
+
+Plan Type, Effective Date, Expires Date 
+
+Address information (Line 1, Line 2, City, State, Zip) 
+
+Phone, Policy ID, Group, Payer ID 
+
+Active Insurance Company checkbox 
+
+Benefit Cycle, Insurance Type, Policy Type dropdowns 
+
+Update Patient button 
+
+Cardholder Info:  
+
+Relationship dropdown 
+
+DOB, First Name, Last Name 
+
+Coverage Section:  
+
+Pre-Existing Conditions checkbox 
+
+Referral Required checkbox 
+
+Policy Active checkbox 
+
+Coordination of Benefits Updated checkbox 
+
+Contact for Prior Authorization text area 
+
+Individual & Family Deductible/Out of Pocket:  
+
+Amount, Met, Remaining fields for both Individual and Family 
+
+Separate sections for Deductible and Out of Pocket amounts 
+
+Additional Options:  
+
+Out of Pocket Max Includes Deductible checkbox 
+
+Deductible 1st Carryover checkbox 
+
+Only One Copay (Layered) checkbox 
+
+Agent Name, Reference Number, Verification Type fields 
+
+POF on File text area 
+
+Prior Authorization Section:  
+
+Authorization # field 
+
+Status dropdown 
+
+Date Range From/To fields 
+
+Visits Approved, Box 14 fields 
+
+Dx 1, Dx 2 fields 
+
+QA field 
+
+ 
+
+Provider 
+
+PROVIDER Tab Identification Section:  
+
+First Name, Last Name 
+
+Address Line 1, Address Line 2 
+
+City, State, Zip 
+
+NPI, DEA fields 
+
+BCBS Tier, Specialty fields 
+
+Railroad Medicare PTAN, Medicare Group PTAN 
+
+Medicaid 
+
+Contact Information:  
+
+Phone, Fax, Email 1 
+
+Phone 2, Fax 2, Email 2 
+
+Medicare Individual PTAN, Medicare CME 
+
+Status & Validation:  
+
+Status dropdown (Active, etc.) 
+
+Taxonomy field 
+
+Effective/Expires dates 
+
+Provider Validated checkbox 
+
+Additional Provider Management:  
+
+"New Provider" button 
+
+Archive section for provider history 
+
+Provider, NPI, DEA, Location, Phone, Fax, Email columns in archive table 
+
+ 
+
+PA Data 
+
+PA DATA Tab Action Summary Section:  
+
+Queue information 
+
+Disposition 
+
+Last Task 
+
+Last Result 
+
+Due Date 
+
+Provider 
+
+Notes 
+
+Task Control Buttons:  
+
+Complete Task 
+
+Manual 
+
+Transfer 
+
+Choose (dropdown for task selection) 
+
+Task Complete button 
+
+Insurance Details Section:  
+
+Insurance Company 
+
+Plan Type, Effective Date, Expires Date 
+
+Address information (Line 1, Line 2, City, State, Zip) 
+
+Phone, Policy ID, Group, Payer ID 
+
+Active Insurance Company checkbox 
+
+Benefit Cycle, Insurance Type, Policy Type dropdowns 
+
+Update Patient button 
+
+Cardholder Info:  
+
+Relationship dropdown (Adult Dependent, etc.) 
+
+DOB, First Name, Last Name 
+
+Coverage Section:  
+
+Pre-Existing Conditions checkbox 
+
+Referral Required checkbox 
+
+Policy Active checkbox 
+
+Coordination of Benefits Updated checkbox 
+
+Contact for Prior Authorization text area 
+
+Individual & Family Deductible/Out of Pocket:  
+
+Amount, Met, Remaining fields for both Individual and Family 
+
+Separate sections for Deductible and Out of Pocket amounts 
+
+Additional Verification Options:  
+
+Out of Pocket Max Includes Deductible checkbox 
+
+Deductible 1st Carryover checkbox 
+
+Only One Copay (Layered) checkbox 
+
+Agent Name, Reference Number, Verification Type dropdown 
+
+POF on File text area 
+
+Prior Authorization Section:  
+
+Authorization # field 
+
+Status dropdown 
+
+Date Range From/To fields 
+
+Visits Approved, Box 14 fields 
+
+Dx 1, Dx 2 fields (diagnosis codes) 
+
+QA field 
+
+Prior Authorization EV Notes:  
+
+Text area for additional authorization notes 
+
+ 
+
+ 
+
+Notes 
+
+NOTES Tab New Note Section:  
+
+Note text area for creating new notes 
+
+"Create" button to save new notes 
+
+Existing Notes Section:  
+
+Display area for viewing historical notes 
+
+Chronological listing of all previous notes 
+
+Notes should include timestamp and user attribution 
+
+Records 
+
+RECORDS Tab Record Summary Information:  
+
+Disposition: (e.g., "Sept Migration") 
+
+Queue: (e.g., "Patients") 
+
+Date: (with timestamp and user attribution, e.g., "07/06/2023 12:24 by intake form") 
+
+Program: (e.g., "Verifications") 
+
+Completed: (date/time stamp) 
+
+Result: (e.g., "No Result Selected") 
+
+Profile Type: (e.g., "EV Customer") 
+
+Notes: (e.g., "Migration Placeholder") 
+
+Display Format:  
+
+Information presented in a clean, organized layout 
+
+Key-value pairs showing record metadata 
+
+Historical tracking of record changes and updates 

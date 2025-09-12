@@ -1,0 +1,89 @@
+
+Requirements
+
+1. Overview
+The Client Portal is designed for Clinic staff to interact with the mySage RCM system through a secure, modern interface. The portal provides dashboards, reporting, task queues, prior authorization (PA) tracking, and educational insights. It enables clinics to complete tasks, track statuses, and trigger workflows within mySage automatically.
+2. Goals & Objectives
+Provide a modern, user-friendly interface for clinic staff.
+Enable secure login and role-based access.
+Allow clinics to view and manage their queues.
+Provide reports and dashboards with drill-down capabilities.
+Support tracking of Prior Authorizations (PA) and Electronic Visit (EV) status.
+Enable data download/export in standard formats (Excel/PDF).
+Auto-trigger workflows in mySage when clinic tasks are updated.
+3. User Roles
+Clinic Staff User – Can log in, view dashboards, update queues, submit/review PAs, and download reports.
+Clinic Admin – All staff capabilities + manage users and access.
+System Admin (mySage) – Configuration, reporting, and backend monitoring.
+4. Functional Requirements
+4.1 Authentication & Security
+Login with username & password (clinic-provided).
+Support for MFA (Multi-Factor Authentication).
+Role-based access control (Staff, Admin).
+4.2 Dashboard & Reporting
+Provide real-time dashboard with widgets for:
+Pending Queue Items
+Submitted vs Approved/Denied Authorizations
+Live PA Tracker (status + reasons for denial)
+Live EV Tracker (visit status)
+Reports should allow:
+Drill-down to patient/authorization level
+Export to Excel/PDF
+Scheduled email delivery (future scope)
+4.3 Queue Management
+Display current task queue assigned to clinic.
+Allow clinic staff to update queue items (e.g., mark as done, reassign, add notes).
+Queue updates should trigger corresponding workflow in mySage.
+4.4 Live Sheet (Task Completion)
+Provide a Live Sheet view with clinic’s assigned tasks.
+Option to mark task as “done”, which updates mySage in real-time.
+Ability to leave notes/comments for context.
+4.5 Prior Authorization (PA) Tracker
+Real-time PA Tracker dashboard:
+Display status of all PA requests (Submitted, Pending, Approved, Denied).
+Show denial reason for denied PAs.
+Allow filtering by Patient, Date Range, Payer, Status.
+Include Name & Account Number in records (per client request).
+4.6 PA Submission Summary (Approved vs Denied)
+Dashboard/report showing:
+Total PAs submitted
+Approved count
+Denied count
+Drill-down to patient level
+4.7 Live EV Tracker
+Real-time Electronic Visit (EV) Tracker for clinics:
+Display visit status (Scheduled, Completed, Missed, Pending Verification).
+Ability to filter by Date, Patient, Staff.
+4.8 Report Download
+Allow downloading of reports in:
+Excel (.xlsx)
+PDF
+Support for column-level filters before export.
+5. Non-Functional Requirements
+UI/UX: Modern, responsive design (desktop + tablet).
+Performance: Dashboard load ≤ 3 seconds for up to 10,000 records.
+Security: HIPAA-compliant, encrypted data transmission.
+Integration: Seamless with mySage backend workflows.
+Audit Trail: Log user actions (login, report downloads, queue updates).
+6. Assumptions
+Clinics already have valid accounts in mySage.
+Data (PA, EV, Queue) is synced with mySage in near real-time.
+Denial reasons will be provided by mySage.
+
+
+
+Implement other functionalities
+1. User management for Admin user like user can create, update and soft delete user. admin user can also see all users and filter them
+2. When user hover on his profile icon then there should be display following menu
+	* User Profile - Implement user profile page, it will open when user click on his profile icon.
+	* Change Password - Can update his password
+	* Logout
+3. forgort password on login screen
+4. For Queue Management add following filters to filter the data 
+	* Provider 
+	* Porfolio (data like ChiroHD, ChiroOne etc) 
+	* Programss (data like Authorization, Verification, Personal Injury, Billing Programs etc) 
+	* Queue ( data like Audit Required, Authorization etc) 
+	* Dispositions ( data like Ev Received, Pending response from Insurance etc) 
+	* Insurance 
+	* Insurance Type (data like primary, secondary etc)
