@@ -10,7 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Save, Edit, Calendar, User, FileText, CreditCard, Shield, Hospital, Stethoscope, StickyNote, MapPin, Building, Phone, Clock, Activity, AlertTriangle, ListTodo, Users } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Save, Edit, Calendar, User, FileText, CreditCard, Shield, Hospital, Stethoscope, StickyNote, MapPin, Building, Phone, Clock, Activity, AlertTriangle, ListTodo, Users, CheckCircle, PlayCircle, RotateCcw, ChevronDown, ClipboardCheck } from "lucide-react";
 import { mockQueueItems, mockUsers } from "@/data/static-data";
 import { QueueItem } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -1065,47 +1067,1121 @@ export default function TaskDetail() {
 
           {/* EV Data Tab */}
           <TabsContent value="ev-data" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Electronic Visit Data</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Visit Type</Label>
-                    <Input 
-                      placeholder="Enter visit type..."
-                      disabled={isReadOnly || !isEditing}
-                      data-testid="input-visit-type"
-                    />
+            <div className="space-y-6">
+              {/* Action Summary Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5" />
+                    Action Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Queue Information</Label>
+                      <Input 
+                        value={currentTask.queue || ""}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-queue-info"
+                      />
+                    </div>
+                    <div>
+                      <Label>Disposition</Label>
+                      <Input 
+                        value={currentTask.disposition || ""}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-disposition"
+                      />
+                    </div>
+                    <div>
+                      <Label>Last Task</Label>
+                      <Input 
+                        value={(currentTask.evData as any)?.actionSummary?.lastTask || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const actionSummary = evData.actionSummary || {};
+                          actionSummary.lastTask = e.target.value;
+                          evData.actionSummary = actionSummary;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-last-task"
+                      />
+                    </div>
+                    <div>
+                      <Label>Last Result</Label>
+                      <Input 
+                        value={(currentTask.evData as any)?.actionSummary?.lastResult || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const actionSummary = evData.actionSummary || {};
+                          actionSummary.lastResult = e.target.value;
+                          evData.actionSummary = actionSummary;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-last-result"
+                      />
+                    </div>
+                    <div>
+                      <Label>Due Date</Label>
+                      <Input 
+                        type="date"
+                        value={(currentTask.evData as any)?.actionSummary?.dueDate || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const actionSummary = evData.actionSummary || {};
+                          actionSummary.dueDate = e.target.value;
+                          evData.actionSummary = actionSummary;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-due-date"
+                      />
+                    </div>
+                    <div>
+                      <Label>Provider</Label>
+                      <Input 
+                        value={currentTask.provider || ""}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider"
+                      />
+                    </div>
                   </div>
                   <div>
-                    <Label>Visit Date</Label>
-                    <Input 
-                      type="date"
+                    <Label>Notes</Label>
+                    <Textarea 
+                      value={(currentTask.evData as any)?.actionSummary?.notes || ""}
+                      onChange={(e) => {
+                        const evData = currentTask.evData as any || {};
+                        const actionSummary = evData.actionSummary || {};
+                        actionSummary.notes = e.target.value;
+                        evData.actionSummary = actionSummary;
+                        updateTaskField('evData', evData);
+                      }}
                       disabled={isReadOnly || !isEditing}
-                      data-testid="input-visit-date"
+                      rows={3}
+                      data-testid="textarea-notes"
                     />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Task Control Buttons */}
+              {!isReadOnly && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <PlayCircle className="h-5 w-5" />
+                      Task Control
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-3">
+                      <Button
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-700"
+                        data-testid="button-complete-task"
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Complete Task
+                      </Button>
+                      <Button
+                        variant="outline"
+                        data-testid="button-manual"
+                      >
+                        Manual
+                      </Button>
+                      <Button
+                        variant="outline"
+                        data-testid="button-transfer"
+                      >
+                        <RotateCcw className="h-4 w-4 mr-2" />
+                        Transfer
+                      </Button>
+                      <Select>
+                        <SelectTrigger className="w-40" data-testid="select-choose-task">
+                          <SelectValue placeholder="Choose..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="task1">Task Option 1</SelectItem>
+                          <SelectItem value="task2">Task Option 2</SelectItem>
+                          <SelectItem value="task3">Task Option 3</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="secondary"
+                        data-testid="button-task-complete"
+                      >
+                        Task Complete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Insurance Details Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    Insurance Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Insurance Company</Label>
+                      <Input 
+                        value={currentTask.insurance || ""}
+                        onChange={(e) => updateTaskField('insurance', e.target.value)}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-insurance-company"
+                      />
+                    </div>
+                    <div>
+                      <Label>Plan Type</Label>
+                      <Select>
+                        <SelectTrigger data-testid="select-plan-type">
+                          <SelectValue placeholder="Select plan type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hmo">HMO</SelectItem>
+                          <SelectItem value="ppo">PPO</SelectItem>
+                          <SelectItem value="epo">EPO</SelectItem>
+                          <SelectItem value="pos">POS</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Effective Date</Label>
+                      <Input 
+                        type="date"
+                        value={(currentTask.insuranceDetails as any)?.effectiveDate || ""}
+                        onChange={(e) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          details.effectiveDate = e.target.value;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-effective-date"
+                      />
+                    </div>
+                    <div>
+                      <Label>Expires Date</Label>
+                      <Input 
+                        type="date"
+                        value={(currentTask.insuranceDetails as any)?.expiresDate || ""}
+                        onChange={(e) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          details.expiresDate = e.target.value;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-expires-date"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Address Information */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold">Address Information</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Address Line 1</Label>
+                        <Input 
+                          value={(currentTask.insuranceDetails as any)?.address?.line1 || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const address = details.address || {};
+                            address.line1 = e.target.value;
+                            details.address = address;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-address-line1"
+                        />
+                      </div>
+                      <div>
+                        <Label>Address Line 2</Label>
+                        <Input 
+                          value={(currentTask.insuranceDetails as any)?.address?.line2 || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const address = details.address || {};
+                            address.line2 = e.target.value;
+                            details.address = address;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-address-line2"
+                        />
+                      </div>
+                      <div>
+                        <Label>City</Label>
+                        <Input 
+                          value={(currentTask.insuranceDetails as any)?.address?.city || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const address = details.address || {};
+                            address.city = e.target.value;
+                            details.address = address;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-city"
+                        />
+                      </div>
+                      <div>
+                        <Label>State</Label>
+                        <Input 
+                          value={(currentTask.insuranceDetails as any)?.address?.state || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const address = details.address || {};
+                            address.state = e.target.value;
+                            details.address = address;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-state"
+                        />
+                      </div>
+                      <div>
+                        <Label>ZIP Code</Label>
+                        <Input 
+                          value={(currentTask.insuranceDetails as any)?.address?.zip || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const address = details.address || {};
+                            address.zip = e.target.value;
+                            details.address = address;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-zip"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact and Policy Information */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Phone</Label>
+                      <Input 
+                        value={(currentTask.insuranceDetails as any)?.phone || ""}
+                        onChange={(e) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          details.phone = e.target.value;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-phone"
+                      />
+                    </div>
+                    <div>
+                      <Label>Policy ID</Label>
+                      <Input 
+                        value={currentTask.insurancePolicyNumber || ""}
+                        onChange={(e) => updateTaskField('insurancePolicyNumber', e.target.value)}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-policy-id"
+                      />
+                    </div>
+                    <div>
+                      <Label>Group</Label>
+                      <Input 
+                        value={(currentTask.insuranceDetails as any)?.groupId || ""}
+                        onChange={(e) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          details.groupId = e.target.value;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-group"
+                      />
+                    </div>
+                    <div>
+                      <Label>Payer ID</Label>
+                      <Input 
+                        value={(currentTask.insuranceDetails as any)?.payerId || ""}
+                        onChange={(e) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          details.payerId = e.target.value;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-payer-id"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="active-insurance"
+                      disabled={isReadOnly || !isEditing}
+                      data-testid="checkbox-active-insurance"
+                    />
+                    <Label htmlFor="active-insurance">Active Insurance Company</Label>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Benefit Cycle</Label>
+                      <Select>
+                        <SelectTrigger data-testid="select-benefit-cycle">
+                          <SelectValue placeholder="Select benefit cycle" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yearly">Yearly</SelectItem>
+                          <SelectItem value="monthly">Monthly</SelectItem>
+                          <SelectItem value="quarterly">Quarterly</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Insurance Type</Label>
+                      <Select>
+                        <SelectTrigger data-testid="select-insurance-type">
+                          <SelectValue placeholder="Select insurance type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="commercial">Commercial</SelectItem>
+                          <SelectItem value="medicare">Medicare</SelectItem>
+                          <SelectItem value="medicaid">Medicaid</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Policy Type</Label>
+                      <Select>
+                        <SelectTrigger data-testid="select-policy-type">
+                          <SelectValue placeholder="Select policy type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="individual">Individual</SelectItem>
+                          <SelectItem value="family">Family</SelectItem>
+                          <SelectItem value="group">Group</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      variant="outline"
+                      disabled={isReadOnly || !isEditing}
+                      data-testid="button-update-patient"
+                    >
+                      Update Patient
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Cardholder Info */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    Cardholder Info
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <Label>Relationship</Label>
+                      <Select>
+                        <SelectTrigger data-testid="select-relationship">
+                          <SelectValue placeholder="Select relationship" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="self">Self</SelectItem>
+                          <SelectItem value="spouse">Spouse</SelectItem>
+                          <SelectItem value="child">Child</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Date of Birth</Label>
+                      <Input 
+                        type="date"
+                        value={(currentTask.insuranceDetails as any)?.cardholder?.dateOfBirth || ""}
+                        onChange={(e) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const cardholder = details.cardholder || {};
+                          cardholder.dateOfBirth = e.target.value;
+                          details.cardholder = cardholder;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-cardholder-dob"
+                      />
+                    </div>
+                    <div>
+                      <Label>First Name</Label>
+                      <Input 
+                        value={(currentTask.insuranceDetails as any)?.cardholder?.firstName || ""}
+                        onChange={(e) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const cardholder = details.cardholder || {};
+                          cardholder.firstName = e.target.value;
+                          details.cardholder = cardholder;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-cardholder-first-name"
+                      />
+                    </div>
+                    <div>
+                      <Label>Last Name</Label>
+                      <Input 
+                        value={(currentTask.insuranceDetails as any)?.cardholder?.lastName || ""}
+                        onChange={(e) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const cardholder = details.cardholder || {};
+                          cardholder.lastName = e.target.value;
+                          details.cardholder = cardholder;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-cardholder-last-name"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Coverage Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    Coverage
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="pre-existing-conditions"
+                        checked={(currentTask.insuranceDetails as any)?.coverage?.preExistingConditions || false}
+                        onCheckedChange={(checked) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const coverage = details.coverage || {};
+                          coverage.preExistingConditions = checked;
+                          details.coverage = coverage;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="checkbox-pre-existing"
+                      />
+                      <Label htmlFor="pre-existing-conditions">Pre-Existing Conditions</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="referral-required"
+                        checked={(currentTask.insuranceDetails as any)?.coverage?.referralRequired || false}
+                        onCheckedChange={(checked) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const coverage = details.coverage || {};
+                          coverage.referralRequired = checked;
+                          details.coverage = coverage;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="checkbox-referral-required"
+                      />
+                      <Label htmlFor="referral-required">Referral Required</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="policy-active"
+                        checked={(currentTask.insuranceDetails as any)?.coverage?.policyActive || false}
+                        onCheckedChange={(checked) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const coverage = details.coverage || {};
+                          coverage.policyActive = checked;
+                          details.coverage = coverage;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="checkbox-policy-active"
+                      />
+                      <Label htmlFor="policy-active">Policy Active</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="coordination-benefits-updated"
+                        checked={(currentTask.insuranceDetails as any)?.coverage?.coordinationOfBenefitsUpdated || false}
+                        onCheckedChange={(checked) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const coverage = details.coverage || {};
+                          coverage.coordinationOfBenefitsUpdated = checked;
+                          details.coverage = coverage;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="checkbox-coordination-benefits"
+                      />
+                      <Label htmlFor="coordination-benefits-updated">Coordination of Benefits Updated</Label>
+                    </div>
                   </div>
                   <div>
-                    <Label>Visit Status</Label>
-                    <Input 
-                      placeholder="Enter visit status..."
+                    <Label>Contact for Prior Authorization</Label>
+                    <Textarea 
+                      value={(currentTask.insuranceDetails as any)?.coverage?.contactForPriorAuth || ""}
+                      onChange={(e) => {
+                        const details = currentTask.insuranceDetails as any || {};
+                        const coverage = details.coverage || {};
+                        coverage.contactForPriorAuth = e.target.value;
+                        details.coverage = coverage;
+                        updateTaskField('insuranceDetails', details);
+                      }}
                       disabled={isReadOnly || !isEditing}
-                      data-testid="input-visit-status"
+                      rows={3}
+                      data-testid="textarea-contact-prior-auth"
                     />
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Individual & Family Deductible/Out of Pocket */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    Individual & Family Deductible/Out of Pocket
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Individual Deductible */}
                   <div>
-                    <Label>Verification Status</Label>
-                    <Input 
-                      placeholder="Enter verification status..."
+                    <Label className="text-sm font-semibold">Individual Deductible</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                      <div>
+                        <Label>Amount</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.individualDeductible?.amount || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const deductible = coverage.individualDeductible || {};
+                            deductible.amount = parseFloat(e.target.value) || 0;
+                            coverage.individualDeductible = deductible;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-individual-deductible-amount"
+                        />
+                      </div>
+                      <div>
+                        <Label>Met</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.individualDeductible?.met || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const deductible = coverage.individualDeductible || {};
+                            deductible.met = parseFloat(e.target.value) || 0;
+                            coverage.individualDeductible = deductible;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-individual-deductible-met"
+                        />
+                      </div>
+                      <div>
+                        <Label>Remaining</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.individualDeductible?.remaining || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const deductible = coverage.individualDeductible || {};
+                            deductible.remaining = parseFloat(e.target.value) || 0;
+                            coverage.individualDeductible = deductible;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-individual-deductible-remaining"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Family Deductible */}
+                  <div>
+                    <Label className="text-sm font-semibold">Family Deductible</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                      <div>
+                        <Label>Amount</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.familyDeductible?.amount || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const deductible = coverage.familyDeductible || {};
+                            deductible.amount = parseFloat(e.target.value) || 0;
+                            coverage.familyDeductible = deductible;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-family-deductible-amount"
+                        />
+                      </div>
+                      <div>
+                        <Label>Met</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.familyDeductible?.met || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const deductible = coverage.familyDeductible || {};
+                            deductible.met = parseFloat(e.target.value) || 0;
+                            coverage.familyDeductible = deductible;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-family-deductible-met"
+                        />
+                      </div>
+                      <div>
+                        <Label>Remaining</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.familyDeductible?.remaining || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const deductible = coverage.familyDeductible || {};
+                            deductible.remaining = parseFloat(e.target.value) || 0;
+                            coverage.familyDeductible = deductible;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-family-deductible-remaining"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Individual Out of Pocket */}
+                  <div>
+                    <Label className="text-sm font-semibold">Individual Out of Pocket</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                      <div>
+                        <Label>Amount</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.individualOutOfPocket?.amount || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const outOfPocket = coverage.individualOutOfPocket || {};
+                            outOfPocket.amount = parseFloat(e.target.value) || 0;
+                            coverage.individualOutOfPocket = outOfPocket;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-individual-oop-amount"
+                        />
+                      </div>
+                      <div>
+                        <Label>Met</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.individualOutOfPocket?.met || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const outOfPocket = coverage.individualOutOfPocket || {};
+                            outOfPocket.met = parseFloat(e.target.value) || 0;
+                            coverage.individualOutOfPocket = outOfPocket;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-individual-oop-met"
+                        />
+                      </div>
+                      <div>
+                        <Label>Remaining</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.individualOutOfPocket?.remaining || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const outOfPocket = coverage.individualOutOfPocket || {};
+                            outOfPocket.remaining = parseFloat(e.target.value) || 0;
+                            coverage.individualOutOfPocket = outOfPocket;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-individual-oop-remaining"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Family Out of Pocket */}
+                  <div>
+                    <Label className="text-sm font-semibold">Family Out of Pocket</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                      <div>
+                        <Label>Amount</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.familyOutOfPocket?.amount || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const outOfPocket = coverage.familyOutOfPocket || {};
+                            outOfPocket.amount = parseFloat(e.target.value) || 0;
+                            coverage.familyOutOfPocket = outOfPocket;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-family-oop-amount"
+                        />
+                      </div>
+                      <div>
+                        <Label>Met</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.familyOutOfPocket?.met || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const outOfPocket = coverage.familyOutOfPocket || {};
+                            outOfPocket.met = parseFloat(e.target.value) || 0;
+                            coverage.familyOutOfPocket = outOfPocket;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-family-oop-met"
+                        />
+                      </div>
+                      <div>
+                        <Label>Remaining</Label>
+                        <Input 
+                          type="number"
+                          value={(currentTask.insuranceDetails as any)?.coverage?.familyOutOfPocket?.remaining || ""}
+                          onChange={(e) => {
+                            const details = currentTask.insuranceDetails as any || {};
+                            const coverage = details.coverage || {};
+                            const outOfPocket = coverage.familyOutOfPocket || {};
+                            outOfPocket.remaining = parseFloat(e.target.value) || 0;
+                            coverage.familyOutOfPocket = outOfPocket;
+                            details.coverage = coverage;
+                            updateTaskField('insuranceDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-family-oop-remaining"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Additional Options */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Additional Options
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="oop-max-includes-deductible"
+                        checked={(currentTask.insuranceDetails as any)?.coverage?.outOfPocketMaxIncludesDeductible || false}
+                        onCheckedChange={(checked) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const coverage = details.coverage || {};
+                          coverage.outOfPocketMaxIncludesDeductible = checked;
+                          details.coverage = coverage;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="checkbox-oop-includes-deductible"
+                      />
+                      <Label htmlFor="oop-max-includes-deductible">Out of Pocket Max Includes Deductible</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="deductible-carryover"
+                        checked={(currentTask.insuranceDetails as any)?.coverage?.deductibleFirstCarryover || false}
+                        onCheckedChange={(checked) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const coverage = details.coverage || {};
+                          coverage.deductibleFirstCarryover = checked;
+                          details.coverage = coverage;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="checkbox-deductible-carryover"
+                      />
+                      <Label htmlFor="deductible-carryover">Deductible 1st Carryover</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="only-one-copay"
+                        checked={(currentTask.insuranceDetails as any)?.coverage?.onlyOneCopayLayered || false}
+                        onCheckedChange={(checked) => {
+                          const details = currentTask.insuranceDetails as any || {};
+                          const coverage = details.coverage || {};
+                          coverage.onlyOneCopayLayered = checked;
+                          details.coverage = coverage;
+                          updateTaskField('insuranceDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="checkbox-only-one-copay"
+                      />
+                      <Label htmlFor="only-one-copay">Only One Copay (Layered)</Label>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Agent Name</Label>
+                      <Input 
+                        value={(currentTask.evData as any)?.agentName || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          evData.agentName = e.target.value;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-agent-name"
+                      />
+                    </div>
+                    <div>
+                      <Label>Reference Number</Label>
+                      <Input 
+                        value={(currentTask.evData as any)?.referenceNumber || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          evData.referenceNumber = e.target.value;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-reference-number"
+                      />
+                    </div>
+                    <div>
+                      <Label>Verification Type</Label>
+                      <Select>
+                        <SelectTrigger data-testid="select-verification-type">
+                          <SelectValue placeholder="Select verification type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="phone">Phone</SelectItem>
+                          <SelectItem value="online">Online</SelectItem>
+                          <SelectItem value="fax">Fax</SelectItem>
+                          <SelectItem value="mail">Mail</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>POF on File</Label>
+                    <Textarea 
+                      value={(currentTask.evData as any)?.pofOnFile || ""}
+                      onChange={(e) => {
+                        const evData = currentTask.evData as any || {};
+                        evData.pofOnFile = e.target.value;
+                        updateTaskField('evData', evData);
+                      }}
                       disabled={isReadOnly || !isEditing}
-                      data-testid="input-verification-status"
+                      rows={3}
+                      data-testid="textarea-pof-on-file"
                     />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+
+              {/* Prior Authorization Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ClipboardCheck className="h-5 w-5" />
+                    Prior Authorization
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Authorization #</Label>
+                      <Input 
+                        value={(currentTask.evData as any)?.priorAuth?.authorizationNumber || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const priorAuth = evData.priorAuth || {};
+                          priorAuth.authorizationNumber = e.target.value;
+                          evData.priorAuth = priorAuth;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-authorization-number"
+                      />
+                    </div>
+                    <div>
+                      <Label>Status</Label>
+                      <Select>
+                        <SelectTrigger data-testid="select-auth-status">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="approved">Approved</SelectItem>
+                          <SelectItem value="denied">Denied</SelectItem>
+                          <SelectItem value="expired">Expired</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Date Range From</Label>
+                      <Input 
+                        type="date"
+                        value={(currentTask.evData as any)?.priorAuth?.dateRangeFrom || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const priorAuth = evData.priorAuth || {};
+                          priorAuth.dateRangeFrom = e.target.value;
+                          evData.priorAuth = priorAuth;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-date-range-from"
+                      />
+                    </div>
+                    <div>
+                      <Label>Date Range To</Label>
+                      <Input 
+                        type="date"
+                        value={(currentTask.evData as any)?.priorAuth?.dateRangeTo || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const priorAuth = evData.priorAuth || {};
+                          priorAuth.dateRangeTo = e.target.value;
+                          evData.priorAuth = priorAuth;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-date-range-to"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <Label>Visits Approved</Label>
+                      <Input 
+                        type="number"
+                        value={(currentTask.evData as any)?.priorAuth?.visitsApproved || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const priorAuth = evData.priorAuth || {};
+                          priorAuth.visitsApproved = parseInt(e.target.value) || 0;
+                          evData.priorAuth = priorAuth;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-visits-approved"
+                      />
+                    </div>
+                    <div>
+                      <Label>Box 14</Label>
+                      <Input 
+                        value={(currentTask.evData as any)?.priorAuth?.box14 || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const priorAuth = evData.priorAuth || {};
+                          priorAuth.box14 = e.target.value;
+                          evData.priorAuth = priorAuth;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-box14"
+                      />
+                    </div>
+                    <div>
+                      <Label>Dx 1</Label>
+                      <Input 
+                        value={(currentTask.evData as any)?.priorAuth?.dx1 || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const priorAuth = evData.priorAuth || {};
+                          priorAuth.dx1 = e.target.value;
+                          evData.priorAuth = priorAuth;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-dx1"
+                      />
+                    </div>
+                    <div>
+                      <Label>Dx 2</Label>
+                      <Input 
+                        value={(currentTask.evData as any)?.priorAuth?.dx2 || ""}
+                        onChange={(e) => {
+                          const evData = currentTask.evData as any || {};
+                          const priorAuth = evData.priorAuth || {};
+                          priorAuth.dx2 = e.target.value;
+                          evData.priorAuth = priorAuth;
+                          updateTaskField('evData', evData);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-dx2"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>QA</Label>
+                    <Input 
+                      value={(currentTask.evData as any)?.priorAuth?.qa || ""}
+                      onChange={(e) => {
+                        const evData = currentTask.evData as any || {};
+                        const priorAuth = evData.priorAuth || {};
+                        priorAuth.qa = e.target.value;
+                        evData.priorAuth = priorAuth;
+                        updateTaskField('evData', evData);
+                      }}
+                      disabled={isReadOnly || !isEditing}
+                      data-testid="input-qa"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* PA Data Tab */}
@@ -1155,48 +2231,480 @@ export default function TaskDetail() {
 
           {/* Provider Tab */}
           <TabsContent value="provider" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Provider Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Provider Name</Label>
-                    <Input 
-                      value={currentTask.provider} 
-                      onChange={(e) => updateTaskField('provider', e.target.value)}
-                      disabled={isReadOnly || !isEditing}
-                      data-testid="input-provider-name"
-                    />
+            <div className="space-y-6">
+              {/* Identification Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    Identification
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>First Name</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.firstName || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.firstName = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-first-name"
+                      />
+                    </div>
+                    <div>
+                      <Label>Last Name</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.lastName || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.lastName = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-last-name"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label>Provider NPI</Label>
-                    <Input 
-                      placeholder="Enter provider NPI..."
-                      disabled={isReadOnly || !isEditing}
-                      data-testid="input-provider-npi"
-                    />
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold">Address Information</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Address Line 1</Label>
+                        <Input 
+                          value={(currentTask.providerDetails as any)?.address?.line1 || ""}
+                          onChange={(e) => {
+                            const details = currentTask.providerDetails as any || {};
+                            const address = details.address || {};
+                            address.line1 = e.target.value;
+                            details.address = address;
+                            updateTaskField('providerDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-provider-address-line1"
+                        />
+                      </div>
+                      <div>
+                        <Label>Address Line 2</Label>
+                        <Input 
+                          value={(currentTask.providerDetails as any)?.address?.line2 || ""}
+                          onChange={(e) => {
+                            const details = currentTask.providerDetails as any || {};
+                            const address = details.address || {};
+                            address.line2 = e.target.value;
+                            details.address = address;
+                            updateTaskField('providerDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-provider-address-line2"
+                        />
+                      </div>
+                      <div>
+                        <Label>City</Label>
+                        <Input 
+                          value={(currentTask.providerDetails as any)?.address?.city || ""}
+                          onChange={(e) => {
+                            const details = currentTask.providerDetails as any || {};
+                            const address = details.address || {};
+                            address.city = e.target.value;
+                            details.address = address;
+                            updateTaskField('providerDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-provider-city"
+                        />
+                      </div>
+                      <div>
+                        <Label>State</Label>
+                        <Input 
+                          value={(currentTask.providerDetails as any)?.address?.state || ""}
+                          onChange={(e) => {
+                            const details = currentTask.providerDetails as any || {};
+                            const address = details.address || {};
+                            address.state = e.target.value;
+                            details.address = address;
+                            updateTaskField('providerDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-provider-state"
+                        />
+                      </div>
+                      <div>
+                        <Label>ZIP Code</Label>
+                        <Input 
+                          value={(currentTask.providerDetails as any)?.address?.zip || ""}
+                          onChange={(e) => {
+                            const details = currentTask.providerDetails as any || {};
+                            const address = details.address || {};
+                            address.zip = e.target.value;
+                            details.address = address;
+                            updateTaskField('providerDetails', details);
+                          }}
+                          disabled={isReadOnly || !isEditing}
+                          data-testid="input-provider-zip"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <Label>Specialty</Label>
-                    <Input 
-                      placeholder="Enter provider specialty..."
-                      disabled={isReadOnly || !isEditing}
-                      data-testid="input-provider-specialty"
-                    />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>NPI</Label>
+                      <Input 
+                        value={currentTask.providerNpi || ""}
+                        onChange={(e) => updateTaskField('providerNpi', e.target.value)}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-npi"
+                      />
+                    </div>
+                    <div>
+                      <Label>DEA</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.dea || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.dea = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-dea"
+                      />
+                    </div>
+                    <div>
+                      <Label>BCBS Tier</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.bcbsTier || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.bcbsTier = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-bcbs-tier"
+                      />
+                    </div>
+                    <div>
+                      <Label>Specialty</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.specialty || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.specialty = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-specialty"
+                      />
+                    </div>
+                    <div>
+                      <Label>Railroad Medicare PTAN</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.railroadMedicarePtan || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.railroadMedicarePtan = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-railroad-medicare-ptan"
+                      />
+                    </div>
+                    <div>
+                      <Label>Medicare Group PTAN</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.medicareGroupPtan || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.medicareGroupPtan = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-medicare-group-ptan"
+                      />
+                    </div>
+                    <div>
+                      <Label>Medicaid</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.medicaid || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.medicaid = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-medicaid"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label>Contact Number</Label>
-                    <Input 
-                      placeholder="Enter provider contact..."
-                      disabled={isReadOnly || !isEditing}
-                      data-testid="input-provider-contact"
-                    />
+                </CardContent>
+              </Card>
+
+              {/* Contact Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Phone className="h-5 w-5" />
+                    Contact Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Phone</Label>
+                      <Input 
+                        value={currentTask.providerPhone || ""}
+                        onChange={(e) => updateTaskField('providerPhone', e.target.value)}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-phone"
+                      />
+                    </div>
+                    <div>
+                      <Label>Fax</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.fax || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.fax = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-fax"
+                      />
+                    </div>
+                    <div>
+                      <Label>Email 1</Label>
+                      <Input 
+                        type="email"
+                        value={(currentTask.providerDetails as any)?.email1 || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.email1 = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-email1"
+                      />
+                    </div>
+                    <div>
+                      <Label>Phone 2</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.phone2 || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.phone2 = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-phone2"
+                      />
+                    </div>
+                    <div>
+                      <Label>Fax 2</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.fax2 || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.fax2 = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-fax2"
+                      />
+                    </div>
+                    <div>
+                      <Label>Email 2</Label>
+                      <Input 
+                        type="email"
+                        value={(currentTask.providerDetails as any)?.email2 || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.email2 = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-email2"
+                      />
+                    </div>
+                    <div>
+                      <Label>Medicare Individual PTAN</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.medicareIndividualPtan || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.medicareIndividualPtan = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-medicare-individual-ptan"
+                      />
+                    </div>
+                    <div>
+                      <Label>Medicare CME</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.medicareCme || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.medicareCme = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-medicare-cme"
+                      />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+
+              {/* Status & Validation */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    Status & Validation
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Status</Label>
+                      <Select>
+                        <SelectTrigger data-testid="select-provider-status">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="suspended">Suspended</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Taxonomy</Label>
+                      <Input 
+                        value={(currentTask.providerDetails as any)?.taxonomy || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.taxonomy = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-taxonomy"
+                      />
+                    </div>
+                    <div>
+                      <Label>Effective Date</Label>
+                      <Input 
+                        type="date"
+                        value={(currentTask.providerDetails as any)?.effectiveDate || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.effectiveDate = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-effective-date"
+                      />
+                    </div>
+                    <div>
+                      <Label>Expires Date</Label>
+                      <Input 
+                        type="date"
+                        value={(currentTask.providerDetails as any)?.expiresDate || ""}
+                        onChange={(e) => {
+                          const details = currentTask.providerDetails as any || {};
+                          details.expiresDate = e.target.value;
+                          updateTaskField('providerDetails', details);
+                        }}
+                        disabled={isReadOnly || !isEditing}
+                        data-testid="input-provider-expires-date"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="provider-validated"
+                      checked={(currentTask.providerDetails as any)?.providerValidated || false}
+                      onCheckedChange={(checked) => {
+                        const details = currentTask.providerDetails as any || {};
+                        details.providerValidated = checked;
+                        updateTaskField('providerDetails', details);
+                      }}
+                      disabled={isReadOnly || !isEditing}
+                      data-testid="checkbox-provider-validated"
+                    />
+                    <Label htmlFor="provider-validated">Provider Validated</Label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Additional Provider Management */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Additional Provider Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Provider History</h3>
+                    <Button
+                      variant="outline"
+                      disabled={isReadOnly || !isEditing}
+                      data-testid="button-new-provider"
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      New Provider
+                    </Button>
+                  </div>
+
+                  {/* Archive Section */}
+                  <div>
+                    <Label className="text-sm font-semibold">Archive</Label>
+                    <div className="mt-2 border rounded-lg overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className="bg-muted">
+                            <tr>
+                              <th className="text-left p-3 font-semibold">Provider</th>
+                              <th className="text-left p-3 font-semibold">NPI</th>
+                              <th className="text-left p-3 font-semibold">DEA</th>
+                              <th className="text-left p-3 font-semibold">Location</th>
+                              <th className="text-left p-3 font-semibold">Phone</th>
+                              <th className="text-left p-3 font-semibold">Fax</th>
+                              <th className="text-left p-3 font-semibold">Email</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-t">
+                              <td className="p-3">{currentTask.provider}</td>
+                              <td className="p-3">{currentTask.providerNpi || "N/A"}</td>
+                              <td className="p-3">{(currentTask.providerDetails as any)?.dea || "N/A"}</td>
+                              <td className="p-3">{currentTask.providerLocation || "N/A"}</td>
+                              <td className="p-3">{currentTask.providerPhone || "N/A"}</td>
+                              <td className="p-3">{(currentTask.providerDetails as any)?.fax || "N/A"}</td>
+                              <td className="p-3">{(currentTask.providerDetails as any)?.email1 || "N/A"}</td>
+                            </tr>
+                            {/* Additional historical entries would be rendered here */}
+                            <tr className="border-t text-center text-muted-foreground">
+                              <td colSpan={7} className="p-4">
+                                No additional provider history available
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Records Tab */}

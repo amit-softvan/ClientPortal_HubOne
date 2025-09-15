@@ -1,12 +1,25 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from '@shared/schema';
-import { mockUsers } from '@/data/static-data';
+import { apiService } from '@/services/api';
+
+// User interface for auth context
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  isActive: boolean;
+  lastLogin?: string;
+  permissions: string[];
+}
 
 interface AuthContextType {
   user: User | null;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,24 +40,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (username: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Find user in mock data (in real app, this would be an API call)
-    const foundUser = mockUsers.find(u => u.username === username && u.isActive);
-    
-    if (foundUser) {
-      // Update last login
-      const userWithLastLogin = {
-        ...foundUser,
-        lastLogin: new Date(),
-      };
+    try {
+      const response = await apiService.login({ username, password });
       
-      setUser(userWithLastLogin);
-      localStorage.setItem('currentUser', JSON.stringify(userWithLastLogin));
-      localStorage.setItem('isLoggedIn', 'true');
-      setIsLoading(false);
-      return true;
+      if (response.success && response.data) {
+        const userData = response.data.user;
+        setUser(userData);
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('authToken', response.data.token);
+        setIsLoading(false);
+        return true;
+      }
+    } catch (error) {
+      console.error('Login error:', error);
     }
     
     setIsLoading(false);
@@ -55,10 +64,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('authToken');
+  };
+
+  const hasPermission = (permission: string): boolean => {
+    return user?.permissions?.includes(permission) || false;
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading, hasPermission }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,0 +1,105 @@
+Project Update Requirements:
+
+Remove Backend / Node.js Code
+
+We only need a ReactJS frontend with static data.
+
+Remove all server-side and Node.js code.
+
+Make the project pure ReactJS.
+
+API Handling (Dummy for Now)
+
+Create a common API service utility with functions for GET, POST, PUT, and DELETE.
+
+For now, return dummy JSON data instead of calling any real API.
+
+Use these API calls wherever data is fetched (simulate DB calls).
+
+Configuration File
+
+Create a config.js (or config.ts if using TypeScript) file.
+
+Add configurations such as:
+
+API_BASE_URL (dummy for now)
+
+DEFAULT_PAGE_SIZE
+
+APP_NAME (optional)
+
+Menu & Permissions
+
+Implement menu rendering based on permissions.
+
+Permissions will be fetched from API (dummy data for now).
+
+If a user doesn’t have permission → hide that menu item.
+
+Login Page
+
+Remove the "Remember Me" checkbox completely.
+
+Client-Side Validations (Reusable)
+
+Create a validation utility that can be reused in forms.
+
+Implement:
+
+Email validation
+
+Phone number validation
+
+Numeric validation
+
+Show validation messages on submit.
+
+Loading Indicator
+
+Create a common loading spinner component.
+
+Show loading spinner for 3 seconds on every API call (simulate data fetching).
+
+Queue Management Updates
+
+Summary Page:
+
+Provider, Portfolio, Queue, Insurance, Disposition → use searchable dropdowns.
+
+Insurance dropdown should be multi-select.
+
+Start Task Page:
+
+Move "Save Changes" and "Cancel" buttons inside each tab.
+
+Remove common Save button for the whole page.
+
+At all places, keep Back button with only icon (no text).
+
+User Management Updates
+
+On Edit User, open a popup with the same component used for Add User.
+
+On Activate/Deactivate User, show a confirmation popup before action.
+
+Add sorting mechanism on user list. On sort → call API again (dummy for now).
+
+Hide Specific Menus (Temporary)
+
+Comment out the menu code for these items (do not delete):
+
+PA Tracker
+
+EV Tracker
+
+Reports
+
+⚡ Important Notes for AI:
+
+Keep the project modular and reusable.
+
+Write clean, commented code so we can easily switch to real APIs later.
+
+Use functional React components and hooks.
+
+Use dummy JSON data in API service for now.

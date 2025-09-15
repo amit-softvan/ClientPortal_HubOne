@@ -1,0 +1,77 @@
+I have added few requirement of the start task page in queue management module.
+We have successfully perfectly created the Header section along with “Customer Info” and “Insurance” tabs, but we need update the other tabs as per following requirement
+
+Tabbed Content Sections:
+1.	EV DATA Tab Action Summary Section: 
+o	Queue information
+o	Disposition
+o	Last Task
+o	Last Result
+o	Due Date
+o	Provider
+o	Notes
+Task Control Buttons: 
+o	Complete Task
+o	Manual
+o	Transfer
+o	Choose (dropdown for task selection)
+o	Task Complete button
+Insurance Details Section: 
+o	Insurance Company
+o	Plan Type, Effective Date, Expires Date
+o	Address information (Line 1, Line 2, City, State, Zip)
+o	Phone, Policy ID, Group, Payer ID
+o	Active Insurance Company checkbox
+o	Benefit Cycle, Insurance Type, Policy Type dropdowns
+o	Update Patient button
+Cardholder Info: 
+o	Relationship dropdown
+o	DOB, First Name, Last Name
+Coverage Section: 
+o	Pre-Existing Conditions checkbox
+o	Referral Required checkbox
+o	Policy Active checkbox
+o	Coordination of Benefits Updated checkbox
+o	Contact for Prior Authorization text area
+Individual & Family Deductible/Out of Pocket: 
+o	Amount, Met, Remaining fields for both Individual and Family
+o	Separate sections for Deductible and Out of Pocket amounts
+Additional Options: 
+o	Out of Pocket Max Includes Deductible checkbox
+o	Deductible 1st Carryover checkbox
+o	Only One Copay (Layered) checkbox
+o	Agent Name, Reference Number, Verification Type fields
+o	POF on File text area
+Prior Authorization Section: 
+o	Authorization # field
+o	Status dropdown
+o	Date Range From/To fields
+o	Visits Approved, Box 14 fields
+o	Dx 1, Dx 2 fields
+o	QA field
+2.	PROVIDER Tab Identification Section: 
+o	First Name, Last Name
+o	Address Line 1, Address Line 2
+o	City, State, Zip
+o	NPI, DEA fields
+o	BCBS Tier, Specialty fields
+o	Railroad Medicare PTAN, Medicare Group PTAN
+o	Medicaid
+Contact Information: 
+o	Phone, Fax, Email 1
+o	Phone 2, Fax 2, Email 2
+o	Medicare Individual PTAN, Medicare CME
+Status & Validation: 
+o	Status dropdown (Active, etc.)
+o	Taxonomy field
+o	Effective/Expires dates
+o	Provider Validated checkbox
+Additional Provider Management: 
+o	"New Provider" button
+o	Archive section for provider history
+o	Provider, NPI, DEA, Location, Phone, Fax, Email columns in archive table
+
+
+The current left panel occupies too much horizontal space on desktop web screens. To optimize screen real estate and improve usability, the left panel should be redesigned to display only icons by default. When the user hovers over the panel, it should expand to show the full menu names, and automatically collapse back to icons once the mouse pointer leaves the panel area.
+This behavior should be applied only to the desktop web version. The mobile application should continue using the existing menu design without this hover-based interaction.
+

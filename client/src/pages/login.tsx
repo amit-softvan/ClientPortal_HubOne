@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { validateEmail, validateRequired } from "@/utils/validation";
 import {
   Dialog,
   DialogContent,
@@ -24,8 +25,8 @@ export default function Login() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    remember: false,
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
@@ -33,12 +34,19 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.username || !formData.password) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter both username and password.",
-      });
+    // Clear previous errors
+    setErrors({});
+    
+    // Validate form fields
+    const usernameValidation = validateRequired(formData.username, "Username");
+    const passwordValidation = validateRequired(formData.password, "Password");
+    
+    const newErrors: Record<string, string> = {};
+    if (!usernameValidation.isValid) newErrors.username = usernameValidation.message!;
+    if (!passwordValidation.isValid) newErrors.password = passwordValidation.message!;
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -96,6 +104,11 @@ export default function Login() {
                 required
                 data-testid="input-username"
               />
+              {errors.username && (
+                <p className="text-red-500 text-sm mt-1" data-testid="error-username">
+                  {errors.username}
+                </p>
+              )}
             </div>
 
             <div>
@@ -126,21 +139,13 @@ export default function Login() {
                   )}
                 </Button>
               </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1" data-testid="error-password">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="remember"
-                checked={formData.remember}
-                onCheckedChange={(checked) => 
-                  setFormData({ ...formData, remember: checked as boolean })
-                }
-                data-testid="checkbox-remember"
-              />
-              <Label htmlFor="remember" className="text-sm">
-                Remember me
-              </Label>
-            </div>
 
             <Button
               type="submit"
@@ -148,7 +153,7 @@ export default function Login() {
               disabled={isLoading}
               data-testid="button-login"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? <LoadingSpinner size="sm" /> : "Sign In"}
             </Button>
 
             <div className="text-center">
