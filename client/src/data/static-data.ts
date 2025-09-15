@@ -57,6 +57,13 @@ export const mockQueueItems: QueueItem[] = [
     accountNumber: "ACC-2024-001",
     employer: "Tech Corp",
     activeStatus: true,
+    
+    // Contact information
+    primaryPhone: "(555) 123-4567",
+    secondaryPhone: "(555) 123-4568",
+    emailAddress: "john.smith@email.com",
+    emergencyContact: "Jane Smith (Spouse) - (555) 123-4569",
+    
     addressLine1: "123 Main St",
     addressLine2: null,
     city: "San Diego",
@@ -77,11 +84,50 @@ export const mockQueueItems: QueueItem[] = [
     insurance: "Blue Cross",
     insuranceType: "primary",
     insurancePolicyNumber: "W268955855",
+    
+    // Extended insurance info
+    insurancePlanName: "Blue Cross PPO Gold",
+    networkStatus: "In-Network",
+    insuranceGroupNumber: "BCS123456",
+    coverageStartDate: "2024-01-01",
+    coverageEndDate: "2024-12-31",
+    annualDeductible: "$1000",
+    deductibleMet: "$500",
+    coverageDetails: "Full coverage for chiropractic services with $25 copay",
+    
+    // Cardholder info
+    primaryCardholderName: "John Smith",
+    cardholderRelationship: "Self",
+    cardholderDateOfBirth: "1985-03-15",
+    employerPlanSponsor: "Tech Corp",
+    
+    // Benefits and authorization
+    officeVisitCopay: "$25",
+    specialistCopay: "$50",
+    priorAuthRequired: "No",
+    referralRequired: "No",
+    benefitNotes: "Standard chiropractic benefits apply",
+    
+    // Secondary insurance
+    secondaryInsurance: null,
+    secondaryPolicyNumber: null,
+    coordinationOfBenefits: null,
+    secondaryCoverageType: null,
     status: "pending",
     priority: "Urgent",
     urgencyHours: 4,
     requestedDate: new Date("2024-01-20"),
     assignedTo: "1",
+    
+    // Address objects as JSON
+    homeAddress: {
+      street: "123 Main St",
+      city: "San Diego",
+      state: "CA",
+      zipCode: "92101"
+    },
+    mailingAddress: null, // Same as home address
+    
     insuranceDetails: {
       companyName: "Aetna",
       planType: "PPO",
@@ -100,7 +146,32 @@ export const mockQueueItems: QueueItem[] = [
         familyDeductible: { amount: 2000, met: 500, remaining: 1500 },
       },
     },
-    programInfo: null,
+    programInfo: {
+      description: "Prior authorization verification for chiropractic services",
+      flash: null,
+      enrollmentDate: "2024-01-20",
+      eligibilityStatus: "Active",
+      coverageDetails: "Authorized for up to 12 visits per year",
+      icdCodes: [
+        { code: "M54.5", description: "Low back pain" },
+        { code: "M25.512", description: "Pain in left shoulder" }
+      ],
+      enrollments: [
+        {
+          programName: "Authorization",
+          location: "Element Chiropractic and Wellness Center",
+          startedOn: "2024-01-20",
+          dueDate: "2024-12-31",
+          lastTouchDate: "2024-01-20",
+          insuranceType: "primary",
+          status: "Active",
+          eligibilityStatus: "Verified",
+          coverageDetails: "Chiropractic services covered",
+          queue: "Audit Required",
+          disposition: "Pending Response"
+        }
+      ]
+    },
     evData: null,
     paData: null,
     providerDetails: {
@@ -148,6 +219,13 @@ export const mockQueueItems: QueueItem[] = [
     accountNumber: "ACC-2024-002",
     employer: "Healthcare Plus",
     activeStatus: true,
+    
+    // Contact information
+    primaryPhone: "(555) 234-5678",
+    secondaryPhone: null,
+    emailAddress: "sarah.johnson@email.com",
+    emergencyContact: "Mark Johnson (Spouse) - (555) 234-5679",
+    
     addressLine1: "456 Oak Ave",
     addressLine2: "Apt 2B",
     city: "Los Angeles",
@@ -168,11 +246,51 @@ export const mockQueueItems: QueueItem[] = [
     insurance: "Aetna",
     insuranceType: "primary",
     insurancePolicyNumber: "AET123456",
+    
+    // Extended insurance info
+    insurancePlanName: "Aetna Better Health",
+    networkStatus: "In-Network",
+    insuranceGroupNumber: null,
+    coverageStartDate: "2024-01-01",
+    coverageEndDate: "2024-12-31",
+    annualDeductible: "$500",
+    deductibleMet: "$200",
+    coverageDetails: "Standard health insurance coverage",
+    
+    // Cardholder info
+    primaryCardholderName: "Sarah Johnson",
+    cardholderRelationship: "Self",
+    cardholderDateOfBirth: "1990-07-22",
+    employerPlanSponsor: "Healthcare Plus",
+    
+    // Benefits and authorization
+    officeVisitCopay: "$20",
+    specialistCopay: "$40",
+    priorAuthRequired: "Yes",
+    referralRequired: "Yes",
+    benefitNotes: "Requires referral for specialist visits",
+    
+    // Secondary insurance
+    secondaryInsurance: null,
+    secondaryPolicyNumber: null,
+    coordinationOfBenefits: null,
+    secondaryCoverageType: null,
+    
     status: "completed",
     priority: "Normal",
     urgencyHours: null,
     requestedDate: new Date("2024-01-18"),
     assignedTo: "2",
+    
+    // Address objects as JSON
+    homeAddress: {
+      street: "456 Oak Ave, Apt 2B",
+      city: "Los Angeles",
+      state: "CA",
+      zipCode: "90210"
+    },
+    mailingAddress: null,
+    
     insuranceDetails: null,
     programInfo: null,
     evData: null,

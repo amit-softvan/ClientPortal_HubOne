@@ -13,6 +13,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Table,
   TableBody,
   TableCell,
@@ -36,7 +49,10 @@ import {
   RefreshCw, 
   Play, 
   StickyNote, 
-  Eye 
+  Eye,
+  Check,
+  ChevronsUpDown,
+  X
 } from "lucide-react";
 import { mockQueueItems, filterOptions } from "@/data/static-data";
 import { QueueItem } from "@shared/schema";
@@ -52,7 +68,7 @@ export default function QueueManagement() {
     program: "All Programs",
     queue: "All Queues",
     disposition: "All Dispositions",
-    insurance: "All Insurance",
+    insurance: [] as string[], // Changed to array for multi-select
     insuranceType: "All Types",
   });
   const [selectedItem, setSelectedItem] = useState<QueueItem | null>(null);
@@ -76,7 +92,11 @@ export default function QueueManagement() {
 
   const handleAddNote = (item: QueueItem) => {
     setSelectedItem(item);
-    setNote(item.notes || "");
+    // Handle notes as array of note objects or fallback to empty string
+    const lastNote = Array.isArray(item.notes) && item.notes.length > 0 
+      ? item.notes[item.notes.length - 1]?.content || ""
+      : "";
+    setNote(lastNote);
     setShowNoteDialog(true);
   };
 
@@ -129,7 +149,7 @@ export default function QueueManagement() {
         (filters.program === "All Programs" || item.program === filters.program) &&
         (filters.queue === "All Queues" || item.queue === filters.queue) &&
         (filters.disposition === "All Dispositions" || item.disposition === filters.disposition) &&
-        (filters.insurance === "All Insurance" || item.insurance === filters.insurance) &&
+        (filters.insurance.length === 0 || filters.insurance.includes(item.insurance)) &&
         (filters.insuranceType === "All Types" || item.insuranceType === filters.insuranceType)
       );
     })
@@ -156,36 +176,88 @@ export default function QueueManagement() {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
               <div>
                 <Label className="text-sm font-medium">Provider</Label>
-                <Select 
-                  value={filters.provider} 
-                  onValueChange={(value) => setFilters({...filters, provider: value})}
-                >
-                  <SelectTrigger data-testid="filter-provider">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filterOptions.providers.map(option => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between text-left font-normal"
+                      data-testid="filter-provider"
+                    >
+                      {filters.provider || "Select provider..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search providers..." />
+                      <CommandList>
+                        <CommandEmpty>No provider found.</CommandEmpty>
+                        <CommandGroup>
+                          {filterOptions.providers.map((option) => (
+                            <CommandItem
+                              key={option}
+                              value={option}
+                              onSelect={(currentValue) => {
+                                setFilters({...filters, provider: currentValue});
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  filters.provider === option ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              {option}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div>
                 <Label className="text-sm font-medium">Portfolio</Label>
-                <Select 
-                  value={filters.portfolio} 
-                  onValueChange={(value) => setFilters({...filters, portfolio: value})}
-                >
-                  <SelectTrigger data-testid="filter-portfolio">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filterOptions.portfolios.map(option => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between text-left font-normal"
+                      data-testid="filter-portfolio"
+                    >
+                      {filters.portfolio || "Select portfolio..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search portfolios..." />
+                      <CommandList>
+                        <CommandEmpty>No portfolio found.</CommandEmpty>
+                        <CommandGroup>
+                          {filterOptions.portfolios.map((option) => (
+                            <CommandItem
+                              key={option}
+                              value={option}
+                              onSelect={(currentValue) => {
+                                setFilters({...filters, portfolio: currentValue});
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  filters.portfolio === option ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              {option}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div>
@@ -207,53 +279,157 @@ export default function QueueManagement() {
 
               <div>
                 <Label className="text-sm font-medium">Queue</Label>
-                <Select 
-                  value={filters.queue} 
-                  onValueChange={(value) => setFilters({...filters, queue: value})}
-                >
-                  <SelectTrigger data-testid="filter-queue">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filterOptions.queues.map(option => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between text-left font-normal"
+                      data-testid="filter-queue"
+                    >
+                      {filters.queue || "Select queue..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search queues..." />
+                      <CommandList>
+                        <CommandEmpty>No queue found.</CommandEmpty>
+                        <CommandGroup>
+                          {filterOptions.queues.map((option) => (
+                            <CommandItem
+                              key={option}
+                              value={option}
+                              onSelect={(currentValue) => {
+                                setFilters({...filters, queue: currentValue});
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  filters.queue === option ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              {option}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div>
                 <Label className="text-sm font-medium">Dispositions</Label>
-                <Select 
-                  value={filters.disposition} 
-                  onValueChange={(value) => setFilters({...filters, disposition: value})}
-                >
-                  <SelectTrigger data-testid="filter-disposition">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filterOptions.dispositions.map(option => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between text-left font-normal"
+                      data-testid="filter-disposition"
+                    >
+                      {filters.disposition || "Select disposition..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search dispositions..." />
+                      <CommandList>
+                        <CommandEmpty>No disposition found.</CommandEmpty>
+                        <CommandGroup>
+                          {filterOptions.dispositions.map((option) => (
+                            <CommandItem
+                              key={option}
+                              value={option}
+                              onSelect={(currentValue) => {
+                                setFilters({...filters, disposition: currentValue});
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  filters.disposition === option ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              {option}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div>
-                <Label className="text-sm font-medium">Insurance</Label>
-                <Select 
-                  value={filters.insurance} 
-                  onValueChange={(value) => setFilters({...filters, insurance: value})}
-                >
-                  <SelectTrigger data-testid="filter-insurance">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filterOptions.insurances.map(option => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                <Label className="text-sm font-medium">Insurance (Multi-select)</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between text-left font-normal"
+                      data-testid="filter-insurance"
+                    >
+                      {filters.insurance.length === 0
+                        ? "Select insurance..."
+                        : `${filters.insurance.length} selected`}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search insurance..." />
+                      <CommandList>
+                        <CommandEmpty>No insurance found.</CommandEmpty>
+                        <CommandGroup>
+                          {filterOptions.insurances
+                            .filter(option => option !== "All Insurance")
+                            .map((option) => (
+                            <CommandItem
+                              key={option}
+                              value={option}
+                              onSelect={(currentValue) => {
+                                const newInsurance = filters.insurance.includes(currentValue)
+                                  ? filters.insurance.filter(item => item !== currentValue)
+                                  : [...filters.insurance, currentValue];
+                                setFilters({...filters, insurance: newInsurance});
+                              }}
+                            >
+                              <Check
+                                className={`mr-2 h-4 w-4 ${
+                                  filters.insurance.includes(option) ? "opacity-100" : "opacity-0"
+                                }`}
+                              />
+                              {option}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                {filters.insurance.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {filters.insurance.map((insurance) => (
+                      <div
+                        key={insurance}
+                        className="flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs"
+                      >
+                        {insurance}
+                        <X
+                          className="h-3 w-3 cursor-pointer hover:text-blue-900"
+                          onClick={() => {
+                            const newInsurance = filters.insurance.filter(item => item !== insurance);
+                            setFilters({...filters, insurance: newInsurance});
+                          }}
+                        />
+                      </div>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -301,7 +477,7 @@ export default function QueueManagement() {
                       program: "All Programs",
                       queue: "All Queues",
                       disposition: "All Dispositions",
-                      insurance: "All Insurance",
+                      insurance: [],
                       insuranceType: "All Types",
                     });
                     setShowCompleted(false);

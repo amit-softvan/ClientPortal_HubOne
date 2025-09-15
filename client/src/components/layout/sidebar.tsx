@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/components/auth/auth-context";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUserPermissions } from "@/hooks/use-user-permissions";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import config from "@/config/config";
 import {
   BarChart3,
   Calendar,
@@ -17,21 +19,32 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Queue Management", href: "/queue-management", icon: ListTodo },
-  { name: "PA Tracker", href: "/pa-tracker", icon: ClipboardCheck },
-  { name: "EV Tracker", href: "/ev-tracker", icon: Calendar },
-  { name: "Reports", href: "/reports", icon: BarChart3 },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, permission: "dashboard" },
+  { name: "Queue Management", href: "/queue-management", icon: ListTodo, permission: "queue-management" },
+  // Temporarily hidden menu items
+  // { name: "PA Tracker", href: "/pa-tracker", icon: ClipboardCheck, permission: "pa-tracker" },
+  // { name: "EV Tracker", href: "/ev-tracker", icon: Calendar, permission: "ev-tracker" },
+  // { name: "Reports", href: "/reports", icon: BarChart3, permission: "reports" },
 ];
 
 const adminNavigation = [
-  { name: "User Management", href: "/user-management", icon: Users },
+  { name: "User Management", href: "/user-management", icon: Users, permission: "user-management" },
 ];
 
 function SidebarContent() {
   const [location] = useLocation();
   const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
+  const { userPermissions } = useUserPermissions();
+
+  // Filter navigation items based on user permissions
+  const allowedNavigation = navigation.filter(item => 
+    userPermissions.includes(item.permission)
+  );
+
+  const allowedAdminNavigation = adminNavigation.filter(item => 
+    userPermissions.includes(item.permission)
+  );
 
   return (
     <nav 
@@ -59,7 +72,7 @@ function SidebarContent() {
       </div>
 
       <ul className="space-y-2">
-        {navigation.map((item) => {
+        {allowedNavigation.map((item) => {
           const isActive = location === item.href;
           return (
             <li key={item.name}>
@@ -92,13 +105,13 @@ function SidebarContent() {
           );
         })}
 
-        {user?.role === "admin" && (
+        {allowedAdminNavigation.length > 0 && (
           <>
             <li className={cn(
               "border-t border-white/20 my-4 transition-all duration-300",
               isExpanded ? "mx-3" : "mx-1"
             )}></li>
-            {adminNavigation.map((item) => {
+            {allowedAdminNavigation.map((item) => {
               const isActive = location === item.href;
               return (
                 <li key={item.name}>
@@ -172,6 +185,16 @@ export function MobileNavTrigger() {
 function MobileSidebarContent({ onNavigate }: { onNavigate: () => void }) {
   const [location] = useLocation();
   const { user } = useAuth();
+  const { userPermissions } = useUserPermissions();
+
+  // Filter navigation items based on user permissions
+  const allowedNavigation = navigation.filter(item => 
+    userPermissions.includes(item.permission)
+  );
+
+  const allowedAdminNavigation = adminNavigation.filter(item => 
+    userPermissions.includes(item.permission)
+  );
 
   return (
     <nav className="sidebar-gradient h-full p-6 text-white">
@@ -181,7 +204,7 @@ function MobileSidebarContent({ onNavigate }: { onNavigate: () => void }) {
       </div>
 
       <ul className="space-y-2">
-        {navigation.map((item) => {
+        {allowedNavigation.map((item) => {
           const isActive = location === item.href;
           return (
             <li key={item.name}>
@@ -201,10 +224,10 @@ function MobileSidebarContent({ onNavigate }: { onNavigate: () => void }) {
           );
         })}
 
-        {user?.role === "admin" && (
+        {allowedAdminNavigation.length > 0 && (
           <>
             <li className="border-t border-white/20 my-4 mx-3"></li>
-            {adminNavigation.map((item) => {
+            {allowedAdminNavigation.map((item) => {
               const isActive = location === item.href;
               return (
                 <li key={item.name}>

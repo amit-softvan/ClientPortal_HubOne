@@ -44,11 +44,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await apiService.login({ username, password });
       
       if (response.success && response.data) {
-        const userData = response.data.user;
+        const loginData = response.data as { user: User; token: string };
+        const userData = loginData.user;
         setUser(userData);
         localStorage.setItem('currentUser', JSON.stringify(userData));
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('authToken', loginData.token);
         setIsLoading(false);
         return true;
       }

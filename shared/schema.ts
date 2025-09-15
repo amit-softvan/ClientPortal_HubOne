@@ -32,7 +32,13 @@ export const queueItems = pgTable("queue_items", {
   employer: text("employer"),
   activeStatus: boolean("active_status").default(true),
   
-  // Address information
+  // Contact information
+  primaryPhone: text("primary_phone"),
+  secondaryPhone: text("secondary_phone"),
+  emailAddress: text("email_address"),
+  emergencyContact: text("emergency_contact"),
+  
+  // Address information  
   addressLine1: text("address_line_1"),
   addressLine2: text("address_line_2"),
   city: text("city"),
@@ -60,12 +66,45 @@ export const queueItems = pgTable("queue_items", {
   insuranceType: text("insurance_type").notNull(), // primary, secondary
   insurancePolicyNumber: text("insurance_policy_number"),
   
+  // Extended insurance info
+  insurancePlanName: text("insurance_plan_name"),
+  networkStatus: text("network_status"),
+  insuranceGroupNumber: text("insurance_group_number"),
+  coverageStartDate: text("coverage_start_date"),
+  coverageEndDate: text("coverage_end_date"),
+  annualDeductible: text("annual_deductible"),
+  deductibleMet: text("deductible_met"),
+  coverageDetails: text("coverage_details"),
+  
+  // Cardholder info
+  primaryCardholderName: text("primary_cardholder_name"),
+  cardholderRelationship: text("cardholder_relationship"),
+  cardholderDateOfBirth: text("cardholder_date_of_birth"),
+  employerPlanSponsor: text("employer_plan_sponsor"),
+  
+  // Benefits and authorization
+  officeVisitCopay: text("office_visit_copay"),
+  specialistCopay: text("specialist_copay"),
+  priorAuthRequired: text("prior_auth_required"),
+  referralRequired: text("referral_required"),
+  benefitNotes: text("benefit_notes"),
+  
+  // Secondary insurance
+  secondaryInsurance: text("secondary_insurance"),
+  secondaryPolicyNumber: text("secondary_policy_number"),
+  coordinationOfBenefits: text("coordination_of_benefits"),
+  secondaryCoverageType: text("secondary_coverage_type"),
+  
   // Status and tracking
   status: text("status").notNull(), // pending, completed, denied
   priority: text("priority"), // Urgent, Normal, etc.
   urgencyHours: integer("urgency_hours"),
   requestedDate: timestamp("requested_date").notNull(),
   assignedTo: varchar("assigned_to").references(() => users.id),
+  
+  // Address objects as JSON
+  homeAddress: json("home_address"), // Home address object {street, city, state, zipCode}
+  mailingAddress: json("mailing_address"), // Mailing address object {street, city, state, zipCode}
   
   // Complex data as JSON
   insuranceDetails: json("insurance_details"), // Full insurance company info, cardholder details, coverage
@@ -114,6 +153,20 @@ export const addressSchema = z.object({
   city: z.string().optional(),
   state: z.string().optional(),
   zip: z.string().optional(),
+});
+
+export const homeAddressSchema = z.object({
+  street: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zipCode: z.string().optional(),
+});
+
+export const mailingAddressSchema = z.object({
+  street: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zipCode: z.string().optional(),
 });
 
 export const insuranceDetailsSchema = z.object({
@@ -176,6 +229,9 @@ export const icdCodeSchema = z.object({
 export const programInfoSchema = z.object({
   description: z.string().optional(),
   flash: z.string().optional(),
+  enrollmentDate: z.string().optional(),
+  eligibilityStatus: z.string().optional(),
+  coverageDetails: z.string().optional(),
   icdCodes: z.array(icdCodeSchema).optional(),
   enrollments: z.array(z.object({
     programName: z.string(),
@@ -185,6 +241,8 @@ export const programInfoSchema = z.object({
     lastTouchDate: z.string().optional(),
     insuranceType: z.string().optional(),
     status: z.string().optional(),
+    eligibilityStatus: z.string().optional(),
+    coverageDetails: z.string().optional(),
     queue: z.string().optional(),
     disposition: z.string().optional(),
   })).optional(),
@@ -297,6 +355,8 @@ export const insertQueueItemSchema = createInsertSchema(queueItems).omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
+  homeAddress: homeAddressSchema.optional(),
+  mailingAddress: mailingAddressSchema.optional(),
   insuranceDetails: insuranceDetailsSchema.optional(),
   programInfo: programInfoSchema.optional(),
   evData: evDataSchema.optional(),
